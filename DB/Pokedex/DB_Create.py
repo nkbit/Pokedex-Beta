@@ -3,13 +3,13 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, Boolean, F
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
     
-db = create_engine('sqlite:///Pokedex.db')
-Session = sessionmaker(bind=db)
-session = Session()
+db_poke = create_engine('sqlite:///DB/User/Pokedex.db')
+Session_Poke = sessionmaker(bind=db_poke)
+sessionpoke = Session_Poke()
 
-Base = declarative_base()
+Base_poke = declarative_base()
 #tabelas (Numero,Nome,Forma,Tipo 1,Tipo 2,HP,Attack,Defense,Sp.Attack,Sp.Defense,Speed)
-class Pokemon(Base):
+class Pokemon(Base_poke):
     __tablename__ = 'Pokemons'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     Numero = Column('Numero', Integer)
@@ -47,7 +47,7 @@ class Pokemon(Base):
         self.Mitico = Mitico
         self.Geracao = Geracao
 
-class Habilidade(Base):
+class Habilidade(Base_poke):
     __tablename__ = 'Habilidades'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     Nome = Column('Nome', String)
@@ -61,7 +61,7 @@ class Habilidade(Base):
         self.Pokemon = Pokemon
         self.Geracao = Geracao
 
-class Move(Base):
+class Move(Base_poke):
     __tablename__ = 'Moves'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     Nome = Column('Nome', String)
@@ -83,7 +83,7 @@ class Move(Base):
         self.Efeito = Efeito
         self.Probabilidade = Probabilidade
 
-class LigaçãoPokemonHabilidade(Base):
+class LigaçãoPokemonHabilidade(Base_poke):
     __tablename__ = 'LigaçãoPokemonHabilidades'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     id_pokemon = Column('id_pokemon', Integer, ForeignKey('Pokemons.id'), nullable=False)
@@ -99,7 +99,7 @@ class LigaçãoPokemonHabilidade(Base):
         self.id_habilidade = id_habilidade
         self.tipo = tipo
 
-class Genero(Base):
+class Genero(Base_poke):
     __tablename__ = 'Generos'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     Nome = Column('nome', String)
@@ -118,7 +118,7 @@ class Genero(Base):
         self.Genero_Fixo = Genero_Fixo
         self.Sem_Genero = Sem_Genero
 
-class LigacaoPokemonGenero(Base):
+class LigacaoPokemonGenero(Base_poke):
     __tablename__ = 'LigaçãoPokemonGenero'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     pokemon = Column('pokemon', Integer, ForeignKey('Pokemons.id'))
@@ -127,65 +127,3 @@ class LigacaoPokemonGenero(Base):
     def __init__(self, pokemon, genero):
         self.pokemon = pokemon
         self.genero = genero
-    
-
-Base.metadata.create_all(bind=db)
-
-# with open('Pokedex.csv', 'r', encoding='utf-8') as habilidade_csv:
-#     habilidades_pokemon = csv.DictReader(habilidade_csv, delimiter=',')
-#     for i, hab in enumerate(habilidades_pokemon):
-#         if i == 0:
-#             print('Começo')
-#         else:
-#             pokemon = session.query(Pokemon).filter_by(id=i).first()
-#             habilidades_normais = hab['Habilidades'].split(';')
-#             habilidades_hiden = hab['Hiden_Abilit']
-            
-#             #habilidades normais
-#             for hab_normal in habilidades_normais:
-#                 hab_normal = hab_normal.strip()
-#                 habilidade = session.query(Habilidade).filter_by(Nome=hab_normal).first()
-#                 if habilidade:
-#                     ligaçao = LigaçãoPokemonHabilidade(pokemon.id, habilidade.id, 'Normal')
-#                     session.add(ligaçao)
-                
-#             #hanilidades hiden
-#             if habilidades_hiden:
-#                 hab_hiden = habilidades_hiden.strip()
-#                 habilidade = session.query(Habilidade).filter_by(Nome=hab_hiden).first()
-#                 if habilidade:
-#                     ligaçao = LigaçãoPokemonHabilidade(pokemon.id, habilidade.id, 'Hiden')
-#                     session.add(ligaçao)
-            
-#             session.commit()
-
-
-# with open('Genero.csv', 'r', encoding='utf-8') as genero_csv:
-#     genero = csv.DictReader(genero_csv, delimiter=',')
-#     for i, gen in enumerate(genero):
-#         if gen['genero_fixo'] == 'True':
-#             gen['genero_fixo'] = True
-#         else:
-#             gen['genero_fixo'] = False
-#         if gen['sem_genero'] == 'True':
-#             gen['sem_genero'] = True
-#         else:
-#             gen['sem_genero'] = False
-#         gen['masculino'] = float(gen['masculino'])
-#         gen['feminino'] = float(gen['feminino'])
-#         gen_p = Genero(gen['nome'], gen['masculino'], gen['feminino'], gen['genero_fixo'], gen['sem_genero'])
-#         session.add(gen_p)
-#     session.commit()
-#     print('Acabou')
-           
-# gen = session.query(Genero).all()
-# for g in gen:
-#     pokemon = session.query(Pokemon).filter_by(Nome=g.Nome).all()
-#     for poke in pokemon:
-#         ligaçao = LigacaoPokemonGenero(poke.id, g.id)
-#         session.add(ligaçao)
-# session.commit()
-        
-
-
-
